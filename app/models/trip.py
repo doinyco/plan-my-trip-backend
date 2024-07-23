@@ -19,14 +19,16 @@ class Trip(db.Model, ModelMixin):
 
     def update_from_dict(self, data):
         self.destination = data["destination"]
-        self.dates = data["dates"]
+        self.start_date = data["start_date"]
+        self.end_date = data["end_date"]
         self.bugdet = data["bugdet"]
 
     def to_dict(self):
         data = dict(
             id=self.id,
             destination=self.destination,
-            dates=self.dates,
+            start_date=self.start_date,
+            end_date=self.end_date,
             budget=self.budget
         )
 
