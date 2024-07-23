@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.models.trip import Trip
 from ..db import db
 from .model_mixin import ModelMixin
 
