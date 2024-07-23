@@ -1,35 +1,28 @@
 from flask import Flask
-from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
+from .db import db, migrate
+from app.models.user import User
+from app.models.trip import Trip
+from .routes import user_routes
+from .routes import trip_routes
 
-db = SQLAlchemy()
-migrate = Migrate()
 load_dotenv()
 
-def create_app(test_config=None):
+def create_app(config=None):
     app = Flask(__name__)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+        "SQLALCHEMY_DATABASE_URI")
 
-    if test_config is None:
-        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-            "SQLALCHEMY_DATABASE_URI")
-    else:
-        app.config["TESTING"] = True
-        app.config["SQLALCHEMY_TEST_DATABASE_URI"] = os.environ.get(
-            "SQLALCHEMY_TEST_DATABASE_URI")
+    if config:
+        app.config.update(config)
 
-    from app.models.user import User
-
-    # Setup DB
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # Register blueprints here
-    from .routes_user import user_bp
-    app.register_blueprint(user_bp)
+    # Register Blueprints here
+    app.register_blueprint(user_routes.bp)
+    app.register_blueprint(trip_routes.bp)
 
-    CORS(app)
     return app
