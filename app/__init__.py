@@ -1,6 +1,8 @@
 from flask import Flask
 import os
 from dotenv import load_dotenv
+
+from app.routes import auth_routes
 from .db import db, migrate
 from app.models.user import User
 from app.models.trip import Trip
@@ -24,5 +26,5 @@ def create_app(config=None):
     # Register Blueprints here
     app.register_blueprint(user_routes.bp)
     app.register_blueprint(trip_routes.bp)
-
+    app.register_blueprint(auth_routes.bp)
     return app

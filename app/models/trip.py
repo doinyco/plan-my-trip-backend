@@ -3,7 +3,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from typing import Optional
 
-from app.models.user import User
 from ..db import db
 from .model_mixin import ModelMixin
 

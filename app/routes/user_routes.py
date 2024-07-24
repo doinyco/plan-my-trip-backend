@@ -25,3 +25,8 @@ def get_user():
     users = db.session.scalars(query)
 
     return [user.to_dict() for user in users]
+
+
+@bp.get("/test") # test out local env setup and initial deployment with this route
+def print_test():
+    return ["hello world"]
