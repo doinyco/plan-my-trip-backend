@@ -12,6 +12,8 @@ from .routes import trip_routes
 load_dotenv()
 
 def create_app(config=None):
+    print("Testing Deployment and deployments is successful if this prints")
+    
     app = Flask(__name__)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
