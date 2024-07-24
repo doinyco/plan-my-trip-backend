@@ -9,3 +9,4 @@ env.bak/
 venv.bak/
 .env.local
 .env.bak
+*.pyc
