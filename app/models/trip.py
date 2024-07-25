@@ -40,6 +40,7 @@ class Trip(db.Model, ModelMixin):
     def from_dict(cls, data):
         return Trip(
             destination=data["destination"],
-            dates=data["dates"],
+            start_date = data["start_date"],
+            end_date = data["end_date"],
             budget=data["budget"]
         )
