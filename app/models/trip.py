@@ -2,7 +2,6 @@ from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from typing import Optional
-
 from ..db import db
 from .model_mixin import ModelMixin
 
@@ -20,7 +19,7 @@ class Trip(db.Model, ModelMixin):
         self.destination = data["destination"]
         self.start_date = data["start_date"]
         self.end_date = data["end_date"]
-        self.bugdet = data["bugdet"]
+        self.budget = data["budget"]
 
     def to_dict(self):
         data = dict(
