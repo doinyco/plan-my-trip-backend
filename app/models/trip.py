@@ -42,5 +42,6 @@ class Trip(db.Model, ModelMixin):
             destination=data["destination"],
             start_date = data["start_date"],
             end_date = data["end_date"],
-            budget=data["budget"]
+            budget=data["budget"],
+            user_id=data["user_id"]
         )

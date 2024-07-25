@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 
@@ -29,4 +30,5 @@ def create_app(config=None):
     app.register_blueprint(user_routes.bp)
     app.register_blueprint(trip_routes.bp)
     app.register_blueprint(auth_routes.bp)
+    CORS(app)
     return app
