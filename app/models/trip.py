@@ -6,10 +6,10 @@ from app.models.user import User
 class Trip(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     destination: Mapped[str] = mapped_column(String(255), nullable=False)
-    latitudeDestination: Mapped[float] = mapped_column(Float, nullable=False)
-    longitudeDestination: Mapped[float] = mapped_column(Float, nullable=False)
-    startDate: Mapped[Date] = mapped_column(Date, nullable=False)
-    endDate: Mapped[Date] = mapped_column(Date, nullable=False)
+    latitude_destination: Mapped[float] = mapped_column(Float, nullable=False)
+    longitude_destination: Mapped[float] = mapped_column(Float, nullable=False)
+    start_date: Mapped[Date] = mapped_column(Date, nullable=False)
+    end_date: Mapped[Date] = mapped_column(Date, nullable=False)
     budget: Mapped[float] = mapped_column(Float, nullable=False)
     
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
