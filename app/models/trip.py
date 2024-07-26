@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, Float, Date, ForeignKey
+from sqlalchemy import Integer, Float, String, Date, ForeignKey
 from app.db import db
-from app.models.user import User
+# from app.models.itinerary import Itinerary
+# from app.models.user import User
 
 class Trip(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -13,9 +14,9 @@ class Trip(db.Model):
     budget: Mapped[float] = mapped_column(Float, nullable=False)
     
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
-    user: Mapped["User"] = relationship("User", back_populates="trips")
-    
-    itinerary = relationship("Itinerary", back_populates="trip")
+    # user: Mapped["User"] = relationship("User", back_populates="trips")
+
+    # itineraries: Mapped[list["Itinerary"]] = relationship("Itinerary", back_populates="trip")
 
 
     def update_from_dict(self, data):

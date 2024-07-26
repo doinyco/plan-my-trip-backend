@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, Float, String, Text, ForeignKey
 from app.db import db
-from app.models.day import Day
 
 class Activity(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -11,7 +10,7 @@ class Activity(db.Model):
     description: Mapped[str] = mapped_column(Text, nullable=True)
     
     day_id: Mapped[int] = mapped_column(ForeignKey('day.id'), nullable=False)
-    day: Mapped["Day"] = relationship("Day", back_populates="activities")
+    # day: Mapped["Day"] = relationship("Day", back_populates="activities")
 
     def update_from_dict(self, data):
         self.activity = data["activity"]
