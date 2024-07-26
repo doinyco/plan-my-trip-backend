@@ -5,8 +5,10 @@ from openai import OpenAI
 from ..models.user import User
 
 bp = Blueprint("trip", __name__, url_prefix="/trips")
-client = OpenAI()
 
+
+def get_openai_client():
+    return OpenAI()
 
 @bp.post("/generate-trip-plan")
 def generate_trip_plan():
@@ -50,6 +52,7 @@ def generate_trip_plan():
         }}
     """
 
+    client = get_openai_client()  # modified this to avoid the need of creating a new client every time in import
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
