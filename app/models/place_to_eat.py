@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, Float, String, Text, ForeignKey
 from app.db import db
-# from app.models.itinerary import Itinerary
 
 class PlaceToEat(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -9,9 +8,9 @@ class PlaceToEat(db.Model):
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=True)
-    
-    itinerary_id: Mapped[int] = mapped_column(ForeignKey('itinerary.id'), nullable=False)
-    # itinerary: Mapped["Itinerary"] = relationship("Itinerary", back_populates="places_to_eat")
+
+    day_id: Mapped[int] = mapped_column(ForeignKey('day.id'), nullable=False)
+    day: Mapped["Day"] = relationship("Day", back_populates="places_to_eat")
 
     def update_from_dict(self, data):
         self.place = data["place"]

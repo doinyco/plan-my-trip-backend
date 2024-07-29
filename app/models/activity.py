@@ -10,7 +10,7 @@ class Activity(db.Model):
     description: Mapped[str] = mapped_column(Text, nullable=True)
     
     day_id: Mapped[int] = mapped_column(ForeignKey('day.id'), nullable=False)
-    # day: Mapped["Day"] = relationship("Day", back_populates="activities")
+    day: Mapped["Day"] = relationship("Day", back_populates="activities")
 
     def update_from_dict(self, data):
         self.activity = data["activity"]
