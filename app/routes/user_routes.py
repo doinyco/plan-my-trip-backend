@@ -29,4 +29,4 @@ def get_user():
 
 @bp.get("/test") # test out local env setup and initial deployment with this route
 def print_test():
-    return ["hello world"]
+    return ["hello world, testing"]
