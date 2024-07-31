@@ -1,7 +1,12 @@
 import pytest
+import sys
+import os
 from unittest.mock import patch, Mock
-from app import db, create_app
 
+# Add the project root to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from app import db, create_app
 
 @pytest.fixture(scope='session', autouse=True)
 def mock_openai():
