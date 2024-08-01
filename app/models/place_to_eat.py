@@ -17,7 +17,7 @@ class PlaceToEat(db.Model):
         self.latitude = data["latitude"]
         self.longitude = data["longitude"]
         self.description = data.get("description")
-        self.itinerary_id = data["itinerary_id"]
+        # self.itinerary_id = data["itinerary_id"]
 
     def to_dict(self):
         return dict(
@@ -26,7 +26,7 @@ class PlaceToEat(db.Model):
             latitude=self.latitude,
             longitude=self.longitude,
             description=self.description,
-            itinerary_id=self.itinerary_id
+            # itinerary_id=self.itinerary_id
         )
 
     @classmethod
@@ -36,5 +36,5 @@ class PlaceToEat(db.Model):
             latitude=data["latitude"],
             longitude=data["longitude"],
             description=data.get("description"),
-            itinerary_id=data["itinerary_id"]
+            # itinerary_id=data["itinerary_id"]
         )

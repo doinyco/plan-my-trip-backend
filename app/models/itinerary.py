@@ -16,3 +16,10 @@ class Itinerary(db.Model, ModelMixin):
     user: Mapped["User"] = relationship("User", back_populates="itineraries")
 
     days: Mapped[list["Day"]] = relationship("Day", back_populates="itinerary")
+
+    def to_dict(self):
+        return dict(
+            id=self.id,
+            trip_id=self.trip_id,
+            user_id=self.user_id
+        )
