@@ -12,6 +12,9 @@ class Trip(db.Model, ModelMixin):
     end_date: Mapped[datetime] = mapped_column(nullable=False)
     budget: Mapped[int] = mapped_column(nullable=False)
 
+    latitude_destination: Mapped[Optional[float]] = mapped_column(nullable=True, default=0.0)
+    longitude_destination: Mapped[Optional[float]] = mapped_column(nullable=True, default=0.0)
+
     user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("user.id"))
     user: Mapped[Optional["User"]] = relationship(back_populates="trips")
 
@@ -22,6 +25,8 @@ class Trip(db.Model, ModelMixin):
         self.start_date = data["start_date"]
         self.end_date = data["end_date"]
         self.budget = data["budget"]
+        self.latitude_destination = data.get("latitude_destination")
+        self.longitude_destination = data.get("longitude_destination")
 
     def to_dict(self):
         data = dict(
@@ -29,7 +34,9 @@ class Trip(db.Model, ModelMixin):
             destination=self.destination,
             start_date=self.start_date,
             end_date=self.end_date,
-            budget=self.budget
+            budget=self.budget,
+            latitude_destination=self.latitude_destination,
+            longitude_destination=self.longitude_destination
         )
 
         if self.user_id:
@@ -41,8 +48,10 @@ class Trip(db.Model, ModelMixin):
     def from_dict(cls, data):
         return Trip(
             destination=data["destination"],
-            start_date = data["start_date"],
-            end_date = data["end_date"],
+            start_date=data["start_date"],
+            end_date=data["end_date"],
             budget=data["budget"],
-            user_id=data["user_id"]
+            user_id=data["user_id"],
+            latitude_destination=data.get("latitude_destination"),
+            longitude_destination=data.get("longitude_destination")
         )

@@ -175,3 +175,16 @@ def delete_trip(trip):
     db.session.commit()
 
     return Response(status=204, mimetype="application/json")
+
+
+@bp.get("/<int:trip_id>")
+def get_trip(trip_id):
+    # Query the database for the trip with the given trip_id
+    trip = db.session.get(Trip, trip_id)
+
+    if not trip:
+        # If the trip is not found, return a 404 error
+        abort(make_response(dict(details="Trip not found"), 404))
+
+    # If the trip is found, return its data
+    return trip.to_dict(), 200
