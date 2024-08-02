@@ -2,6 +2,7 @@ from flask import Flask
 # from flask_cors import CORS
 import os
 from dotenv import load_dotenv
+from flask_cors import CORS
 from app.routes import auth_routes, user_routes, trip_routes
 from .db import db, migrate
 
@@ -31,6 +32,6 @@ def create_app(config=None):
     app.register_blueprint(auth_routes.bp)
     
     # Enable CORS
-    # CORS(app)
+    CORS(app)
     
     return app
