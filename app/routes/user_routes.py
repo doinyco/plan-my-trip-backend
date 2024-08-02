@@ -1,4 +1,5 @@
 from flask import Blueprint, abort, make_response, request, Response
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from ..db import db
 from ..models.user import User
 
@@ -25,6 +26,18 @@ def get_user():
     users = db.session.scalars(query)
 
     return [user.to_dict() for user in users]
+
+@bp.get("/user_profile")
+@jwt_required()
+def get_user_profile():
+    current_user_id = get_jwt_identity()
+    query = db.select(User).filter_by(id=current_user_id)
+    user = db.session.scalar(query)
+
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    return jsonify(user.to_dict()), 200
 
 # @bp.put("/profile")
 # @jwt_required()
