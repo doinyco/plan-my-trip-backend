@@ -1,5 +1,4 @@
-from flask import Blueprint, abort, make_response, request, Response
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask import Blueprint, abort, make_response, request, Response, jsonify
 from ..db import db
 from ..models.user import User
 
@@ -27,65 +26,52 @@ def get_user():
 
     return [user.to_dict() for user in users]
 
-@bp.get("/user_profile")
-@jwt_required()
-def get_user_profile():
-    current_user_id = get_jwt_identity()
-    query = db.select(User).filter_by(id=current_user_id)
-    user = db.session.scalar(query)
 
-    if not user:
-        return jsonify({"msg": "User not found"}), 404
+@bp.get("/test") # test out local env setup and initial deployment with this route
+def print_test():
+    return ["hello world"]
 
-    return jsonify(user.to_dict()), 200
 
-# @bp.put("/profile")
-# @jwt_required()
-# def update_profile():
-#     data = request.get_json()
-#     current_user_id = get_jwt_identity()
+@bp.get("/<int:user_id>/trips")
+def get_user_trips(user_id):
+    user = db.session.query(User).get(user_id)
 
-#     user = db.session.get(User, current_user_id)
+    if user is None:
+        abort(make_response(dict(details="User not found"), 404))
 
-#     if not user:
-#         abort(make_response(dict(details="User not found"), 404))
+    trips_data = []
+    for trip in user.trips:
+        trip_dict = {
+            "destination": trip.destination,
+            "latitude_destination": trip.latitude,
+            "longitude_destination": trip.longitude,
+            "start_date": trip.start_date.strftime('%Y-%m-%d'),
+            "end_date": trip.end_date.strftime('%Y-%m-%d'),
+            "budget": trip.budget,
+            "itinerary": []
+        }
+        for itinerary in trip.itineraries:
+            for day in itinerary.days:
+                day_dict = {
+                    "day": day.day_number,
+                    "activities": [],
+                    "placesToEat": []
+                }
+                for activity in day.activities:
+                    day_dict["activities"].append({
+                        "activity": activity.activity,
+                        "latitude": activity.latitude,
+                        "longitude": activity.longitude,
+                        "description": activity.description
+                    })
+                for place in day.places_to_eat:
+                    day_dict["placesToEat"].append({
+                        "place": place.place,
+                        "latitude": place.latitude,
+                        "longitude": place.longitude,
+                        "description": place.description
+                    })
+                trip_dict["itinerary"].append(day_dict)
+        trips_data.append(trip_dict)
 
-#     try:
-#         if 'username' in data:
-#             user.username = data['username']
-#         # Disallow email changes by not including it here
-#         # Add other fields to update as necessary
-#         db.session.commit()
-#     except Exception as e:
-#         db.session.rollback()
-#         abort(make_response(dict(details=f"Update failed: {str(e)}"), 400))
-
-#     return dict(user=user.to_dict()), 200
-
-# @bp.put("/profile/change-password")
-# @jwt_required()
-# def change_password():
-#     data = request.get_json()
-#     current_password = data.get('current_password')
-#     new_password = data.get('new_password')
-#     current_user_id = get_jwt_identity()
-
-#     user = db.session.get(User, current_user_id)
-
-#     if not current_password or not new_password:
-#         abort(make_response(dict(details="Current password and new password are required"), 400))
-
-#     if not user:
-#         abort(make_response(dict(details="User not found"), 404))
-
-#     if not check_password_hash(user.password, current_password):
-#         abort(make_response(dict(details="Current password is incorrect"), 400))
-
-#     try:
-#         user.password = generate_password_hash(new_password)
-#         db.session.commit()
-#     except Exception as e:
-#         db.session.rollback()
-#         abort(make_response(dict(details=f"Password change failed: {str(e)}"), 400))
-
-#     return dict(details="Password updated successfully"), 200
+    return jsonify(trips_data), 200

@@ -81,6 +81,8 @@ def save_trip(user_id):
 
     trip = Trip(
         destination=itinerary_json['destination'],
+        latitude=itinerary_json['latitude_destination'],
+        longitude=itinerary_json['longitude_destination'],
         start_date=itinerary_json['start_date'],
         end_date=itinerary_json['end_date'],
         budget=itinerary_json['budget'],
@@ -128,7 +130,7 @@ def save_trip(user_id):
         
         db.session.commit()
 
-    return make_response('ok', 201)
+    return jsonify(trip.to_dict(), 201)
 
 
 
