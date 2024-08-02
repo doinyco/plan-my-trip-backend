@@ -22,7 +22,9 @@ class Day(db.Model):
         return dict(
             id=self.id,
             day_number=self.day_number,
-            itinerary_id=self.itinerary_id
+            itinerary_id=self.itinerary_id,
+            activities=[activity.to_dict() for activity in self.activities],
+            places_to_eat=[place_to_eat.to_dict() for place_to_eat in self.places_to_eat]
         )
 
     @classmethod

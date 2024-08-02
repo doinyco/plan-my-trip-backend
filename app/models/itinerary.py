@@ -21,5 +21,6 @@ class Itinerary(db.Model, ModelMixin):
         return dict(
             id=self.id,
             trip_id=self.trip_id,
-            user_id=self.user_id
+            user_id=self.user_id,
+            days=[day.to_dict() for day in self.days]
         )
