@@ -6,8 +6,17 @@ from ..models.itinerary import Itinerary
 from ..models.day import Day
 from ..models.activity import Activity
 from ..models.place_to_eat import PlaceToEat
+from .helpers import validate_model
+from functools import wraps
 
 bp = Blueprint("trip", __name__, url_prefix="/trips")
+
+def require_trip(fn):
+    @wraps(fn)
+    def wrapper(*args, trip_id, **kwargs):
+        trip = validate_model(Trip, trip_id)
+        return fn(*args, trip=trip, **kwargs)
+    return wrapper
 
 def get_openai_client():
     return OpenAI()
@@ -122,24 +131,14 @@ def save_trip(user_id):
 
     return jsonify(trip.to_dict(), 201)
 
-@bp.get("/<int:trip_id>")
-def get_trip(trip_id):
-    # Query the database for the trip with the given trip_id
-    trip = db.session.get(Trip, trip_id)
+@bp.get("/<trip_id>")
+@require_trip
+def get_trip(trip):
+    return dict(trip=trip.to_dict())
 
-    if not trip:
-        # If the trip is not found, return a 404 error
-        abort(make_response(dict(details="Trip not found"), 404))
-
-    # If the trip is found, return its data
-    return trip.to_dict(), 200
-
-@bp.delete("/<int:trip_id>")
-def delete_trip(trip_id):
-    trip = db.session.query(Trip).get(trip_id)
-    if trip is None:
-        return Response(status=404, mimetype="application/json")
-    
+@bp.delete("/trip_id>")
+@require_trip
+def delete_trip(trip):
     db.session.delete(trip)
     db.session.commit()
 
