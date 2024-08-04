@@ -1,45 +1,28 @@
-from flask import Blueprint, abort, make_response, request, Response, jsonify
+from flask import Blueprint, jsonify
 from ..db import db
 from ..models.user import User
-
+from .helpers import validate_model
+from functools import wraps
 
 bp = Blueprint("user", __name__, url_prefix="/users")
 
-@bp.post("")
-def create_goal():
-    data = request.get_json()
+def require_user(fn):
+    @wraps(fn)
+    def wrapper(*args, user_id, **kwargs):
+        user = validate_model(User, user_id)
+        return fn(*args, user=user, **kwargs)
+    return wrapper
 
-    try:
-        user = User.from_dict(data)
-    except KeyError:
-        abort(make_response(dict(details="Invalid data"), 400))
-
-    db.session.add(user)
-    db.session.commit()
-
-    return dict(user=user.to_dict()), 201
-
-@bp.get("")
-def get_user():
-    query = db.select(User)
-    users = db.session.scalars(query)
-
-    return [user.to_dict() for user in users]
-
-
-@bp.get("/test") # test out local env setup and initial deployment with this route
-def print_test():
-    return ["hello world"]
-
-
+@bp.get("/<int:user_id>")
+@require_user
+def get_one_user(user):
+    return dict(user=user.to_dict()), 200
+    
 @bp.get("/<int:user_id>/trips")
-def get_user_trips(user_id):
-    user = db.session.query(User).get(user_id)
-
-    if user is None:
-        abort(make_response(dict(details="User not found"), 404))
-
+@require_user
+def get_user_trips(user):
     trips_data = []
+
     for trip in user.trips:
         trip_dict = {
             "destination": trip.destination,

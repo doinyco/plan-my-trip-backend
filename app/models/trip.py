@@ -14,8 +14,8 @@ class Trip(db.Model, ModelMixin):
     end_date: Mapped[datetime] = mapped_column(nullable=False)
     budget: Mapped[int] = mapped_column(nullable=False)
 
-    latitude_destination: Mapped[Optional[float]] = mapped_column(nullable=True, default=0.0)
-    longitude_destination: Mapped[Optional[float]] = mapped_column(nullable=True, default=0.0)
+    # latitude_destination: Mapped[Optional[float]] = mapped_column(nullable=True, default=0.0)
+    # longitude_destination: Mapped[Optional[float]] = mapped_column(nullable=True, default=0.0)
 
     user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("user.id"))
     user: Mapped[Optional["User"]] = relationship(back_populates="trips")
@@ -29,8 +29,8 @@ class Trip(db.Model, ModelMixin):
         self.start_date = data["start_date"]
         self.end_date = data["end_date"]
         self.budget = data["budget"]
-        self.latitude_destination = data.get("latitude_destination")
-        self.longitude_destination = data.get("longitude_destination")
+        # self.latitude_destination = data.get("latitude_destination")
+        # self.longitude_destination = data.get("longitude_destination")
 
     def to_dict(self):
         data = dict(
