@@ -40,7 +40,8 @@ class Trip(db.Model, ModelMixin):
             longitude=self.longitude,
             start_date=self.start_date,
             end_date=self.end_date,
-            budget=self.budget
+            budget=self.budget,
+            itineraries=[itinerary.to_dict() for itinerary in self.itineraries]
         )
 
         if self.user_id:
