@@ -4,7 +4,7 @@ from app import db
 from app.models.user import User
 
 
-def test_create_goal(client):
+def test_create_user(client):
     # Arrange
     data = {
         "username": "testuser",
@@ -22,7 +22,7 @@ def test_create_goal(client):
     assert response_data["user"]["username"] == data["username"]
     assert response_data["user"]["email"] == data["email"]
 
-def test_create_goal_invalid_data(client):
+def test_create_user_invalid_data(client):
     # Arrange
     data = {
         "username": "testuser"
