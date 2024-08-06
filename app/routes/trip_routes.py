@@ -26,7 +26,7 @@ def generate_trip_plan():
     trip_details = request.get_json()
 
     prompt = f"""
-        Generate a detailed trip plan for visiting {trip_details['destination']} from {trip_details['start_date']} to {trip_details['end_date']} with a budget of {trip_details['budget']}. The plan should include the destination, latitude and longitude of the destination, start and end dates, budget (not more than the given budget), and an itinerary with days. Separate the itinerary into activities (what to do) and places to eat.
+        Generate a detailed trip plan for visiting {trip_details['destination']} from {trip_details['start_date']} to {trip_details['end_date']} with a budget of {trip_details['budget']}. The plan should include the destination, latitude and longitude of the destination, start and end dates (from start day to end day included), budget (not more than the given budget), and an itinerary with days. Separate the itinerary into activities (what to do), places to eat, and places to stay per day. For each activity, place to eat, and place to stay include to approximate cost in the description.
         Format the response as follows:
 
         {{
@@ -49,6 +49,15 @@ def generate_trip_plan():
                 ...
             ],
             "placesToEat": [
+                {{
+                "place": "place_name_placeholder",
+                "latitude": "latitude_placeholder_as_float",
+                "longitude": "longitude_placeholder_as_float",
+                "description": "description_placeholder"
+                }},
+                ...
+            ],
+            "PlaceToRest": [
                 {{
                 "place": "place_name_placeholder",
                 "latitude": "latitude_placeholder_as_float",
