@@ -20,7 +20,11 @@ class Trip(db.Model, ModelMixin):
     user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("user.id"))
     user: Mapped[Optional["User"]] = relationship(back_populates="trips")
 
-    itineraries: Mapped[list["Itinerary"]] = relationship("Itinerary", back_populates="trip")
+    itineraries: Mapped[list["Itinerary"]] = relationship(
+        "Itinerary", 
+        back_populates="trip",
+        cascade="all, delete-orphan"
+        )
 
     def update_from_dict(self, data):
         self.destination = data["destination"]

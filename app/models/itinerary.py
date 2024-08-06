@@ -15,7 +15,11 @@ class Itinerary(db.Model, ModelMixin):
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=True)
     user: Mapped["User"] = relationship("User", back_populates="itineraries")
 
-    days: Mapped[list["Day"]] = relationship("Day", back_populates="itinerary")
+    days: Mapped[list["Day"]] = relationship(
+        "Day", 
+        back_populates="itinerary",
+        cascade="all, delete-orphan"
+        )
 
     def to_dict(self):
         return dict(

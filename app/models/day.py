@@ -11,8 +11,15 @@ class Day(db.Model):
     itinerary_id: Mapped[int] = mapped_column(ForeignKey('itinerary.id'), nullable=False)
     itinerary: Mapped["Itinerary"] = relationship("Itinerary", back_populates="days")
 
-    activities: Mapped[list["Activity"]] = relationship("Activity", back_populates="day")
-    places_to_eat: Mapped[list["PlaceToEat"]] = relationship("PlaceToEat", back_populates="day")
+    activities: Mapped[list["Activity"]] = relationship(
+        "Activity", 
+        back_populates="day",
+        cascade="all, delete-orphan")
+    places_to_eat: Mapped[list["PlaceToEat"]] = relationship(
+        "PlaceToEat", 
+        back_populates="day",
+        cascade="all, delete-orphan"
+        )
 
     def update_from_dict(self, data):
         self.day_number = data.get("day_number", self.day_number)

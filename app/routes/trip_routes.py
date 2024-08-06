@@ -136,7 +136,7 @@ def save_trip(user_id):
 def get_trip(trip):
     return dict(trip=trip.to_dict())
 
-@bp.delete("/trip_id>")
+@bp.delete("/<int:trip_id>")
 @require_trip
 def delete_trip(trip):
     db.session.delete(trip)
