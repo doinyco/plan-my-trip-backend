@@ -3,7 +3,7 @@ from flask import Flask
 import os
 from dotenv import load_dotenv
 from flask_cors import CORS
-from app.routes import auth_routes, user_routes, trip_routes
+from app.routes import auth_routes, user_routes, trip_routes, locationiq_routes
 from .db import db, migrate
 
 # Load environment variables from a .env file if it exists
@@ -30,6 +30,7 @@ def create_app(config=None):
     app.register_blueprint(user_routes.bp)
     app.register_blueprint(trip_routes.bp)
     app.register_blueprint(auth_routes.bp)
+    app.register_blueprint(locationiq_routes.bp)
     
     # Enable CORS
     CORS(app)
