@@ -6,6 +6,7 @@ from ..models.itinerary import Itinerary
 from ..models.day import Day
 from ..models.activity import Activity
 from ..models.place_to_eat import PlaceToEat
+from ..models.place_to_rest import PlaceToRest
 from .helpers import validate_model
 from functools import wraps
 
@@ -135,6 +136,16 @@ def save_trip(user_id):
                 day_id=day.id
             )
             db.session.add(place_to_eat)
+        
+        for place_to_rest_json in e['PlaceToRest']:
+            place_to_rest = PlaceToRest(
+                place=place_to_rest_json['place'],
+                latitude=place_to_rest_json['latitude'],
+                longitude=place_to_rest_json['longitude'],
+                description=place_to_rest_json['description'],
+                day_id=day.id
+            )
+            db.session.add(place_to_rest)
         
         db.session.commit()
 

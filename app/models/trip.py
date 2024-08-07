@@ -17,8 +17,8 @@ class Trip(db.Model, ModelMixin):
     # latitude_destination: Mapped[Optional[float]] = mapped_column(nullable=True, default=0.0)
     # longitude_destination: Mapped[Optional[float]] = mapped_column(nullable=True, default=0.0)
 
-    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("user.id"))
-    user: Mapped[Optional["User"]] = relationship(back_populates="trips")
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    user: Mapped["User"] = relationship(back_populates="trips")
 
     itineraries: Mapped[list["Itinerary"]] = relationship(
         "Itinerary", 

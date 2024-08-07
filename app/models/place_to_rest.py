@@ -10,15 +10,18 @@ class PlaceToRest(db.Model):
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=True)
     
-    itinerary_id: Mapped[int] = mapped_column(ForeignKey('itinerary.id'), nullable=False)
+    # itinerary_id: Mapped[int] = mapped_column(ForeignKey('itinerary.id'), nullable=False)
     # itinerary: Mapped["Itinerary"] = relationship("Itinerary", back_populates="places_to_rest")
+
+    day_id: Mapped[int] = mapped_column(ForeignKey('day.id'), nullable=False)
+    day: Mapped["Day"] = relationship("Day", back_populates="places_to_rest")
 
     def update_from_dict(self, data):
         self.place = data["place"]
         self.latitude = data["latitude"]
         self.longitude = data["longitude"]
         self.description = data.get("description")
-        self.itinerary_id = data["itinerary_id"]
+        # self.itinerary_id = data["itinerary_id"]
 
     def to_dict(self):
         return dict(
@@ -27,7 +30,7 @@ class PlaceToRest(db.Model):
             latitude=self.latitude,
             longitude=self.longitude,
             description=self.description,
-            itinerary_id=self.itinerary_id
+            # itinerary_id=self.itinerary_id
         )
 
     @classmethod
@@ -37,5 +40,5 @@ class PlaceToRest(db.Model):
             latitude=data["latitude"],
             longitude=data["longitude"],
             description=data.get("description"),
-            itinerary_id=data["itinerary_id"]
+            # itinerary_id=data["itinerary_id"]
         )

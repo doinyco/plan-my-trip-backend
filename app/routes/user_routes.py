@@ -39,7 +39,8 @@ def get_user_trips(user):
                 day_dict = {
                     "day": day.day_number,
                     "activities": [],
-                    "placesToEat": []
+                    "placesToEat": [],
+                    "placesToRest": []
                 }
                 for activity in day.activities:
                     day_dict["activities"].append({
@@ -50,6 +51,13 @@ def get_user_trips(user):
                     })
                 for place in day.places_to_eat:
                     day_dict["placesToEat"].append({
+                        "place": place.place,
+                        "latitude": place.latitude,
+                        "longitude": place.longitude,
+                        "description": place.description
+                    })
+                for place in day.places_to_rest:
+                    day_dict["placesToRest"].append({
                         "place": place.place,
                         "latitude": place.latitude,
                         "longitude": place.longitude,
