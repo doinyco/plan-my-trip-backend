@@ -33,7 +33,7 @@ def get_user_trips(user):
             "budget": trip.budget,
             "place_to_rest": {},
             "itinerary": [],
-            "id": trip.id
+            "id": trip.id   
         }
 
         if trip.place_to_rest:
