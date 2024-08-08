@@ -18,6 +18,7 @@ def user(client):
         'password': 'Password1'
     })
     assert response.status_code == 200
+
     user = User.query.filter_by(username='testuser').first()
     return user
 
@@ -39,11 +40,22 @@ def test_complete_flow(mock_openai, client, user, auth_header):
     }, headers=auth_header)
 
     # Debugging statements
-    print("Response status code:", response.status_code)
-    print("Response data:", response.data)
+    print("Response status code (Generate Trip):", response.status_code)
+    print("Response data (Generate Trip):", response.json)
     
     # Ensure response status code is 200
     assert response.status_code == 200
+
+    # Step 3: Fetch the user's trips
+    response = client.get(f'/users/{user.id}/trips', headers=auth_header)
+
+    # Debugging statements
+    print("Response status code (Fetch User Trips):", response.status_code)
+    print("Response data (Fetch User Trips):", response.json)
+
+    # Ensure response status code is 200
+    assert response.status_code == 200
+
 
 # Ensure that your mock setup in `conftest.py` aligns with the routes being tested
 @pytest.fixture(scope='session', autouse=True)
