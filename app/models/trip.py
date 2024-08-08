@@ -1,7 +1,6 @@
 from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, Float
-from typing import Optional
 from ..db import db
 from .model_mixin import ModelMixin
 
@@ -14,11 +13,10 @@ class Trip(db.Model, ModelMixin):
     end_date: Mapped[datetime] = mapped_column(nullable=False)
     budget: Mapped[int] = mapped_column(nullable=False)
 
-    # latitude_destination: Mapped[Optional[float]] = mapped_column(nullable=True, default=0.0)
-    # longitude_destination: Mapped[Optional[float]] = mapped_column(nullable=True, default=0.0)
-
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="trips")
+
+    place_to_rest: Mapped["PlaceToRest"] = relationship("PlaceToRest", back_populates="trip")
 
     itineraries: Mapped[list["Itinerary"]] = relationship(
         "Itinerary", 
@@ -33,8 +31,6 @@ class Trip(db.Model, ModelMixin):
         self.start_date = data["start_date"]
         self.end_date = data["end_date"]
         self.budget = data["budget"]
-        # self.latitude_destination = data.get("latitude_destination")
-        # self.longitude_destination = data.get("longitude_destination")
 
     def to_dict(self):
         data = dict(
@@ -50,6 +46,9 @@ class Trip(db.Model, ModelMixin):
 
         if self.user_id:
             data["user_id"] = self.user_id
+
+        if self.place_to_rest:
+            data["place_to_rest"] = self.place_to_rest.to_dict()
         
         return data
     

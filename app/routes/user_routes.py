@@ -31,16 +31,25 @@ def get_user_trips(user):
             "start_date": trip.start_date.strftime('%Y-%m-%d'),
             "end_date": trip.end_date.strftime('%Y-%m-%d'),
             "budget": trip.budget,
+            "place_to_rest": {},
             "itinerary": [],
             "id": trip.id
         }
+
+        if trip.place_to_rest:
+            trip_dict["place_to_rest"] = {
+                "place": trip.place_to_rest.place,
+                "latitude": trip.place_to_rest.latitude,
+                "longitude": trip.place_to_rest.longitude,
+                "description": trip.place_to_rest.description
+            }
+
         for itinerary in trip.itineraries:
             for day in itinerary.days:
                 day_dict = {
                     "day": day.day_number,
                     "activities": [],
-                    "placesToEat": [],
-                    "placesToRest": []
+                    "placesToEat": []
                 }
                 for activity in day.activities:
                     day_dict["activities"].append({
@@ -51,13 +60,6 @@ def get_user_trips(user):
                     })
                 for place in day.places_to_eat:
                     day_dict["placesToEat"].append({
-                        "place": place.place,
-                        "latitude": place.latitude,
-                        "longitude": place.longitude,
-                        "description": place.description
-                    })
-                for place in day.places_to_rest:
-                    day_dict["placesToRest"].append({
                         "place": place.place,
                         "latitude": place.latitude,
                         "longitude": place.longitude,

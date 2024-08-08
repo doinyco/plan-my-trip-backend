@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, make_response, request, jsonify, Response
+from flask import Blueprint, request, jsonify, Response
 from ..db import db
 from ..models.trip import Trip
 from openai import OpenAI
@@ -9,6 +9,7 @@ from ..models.place_to_eat import PlaceToEat
 from ..models.place_to_rest import PlaceToRest
 from .helpers import validate_model
 from functools import wraps
+from datetime import datetime
 
 bp = Blueprint("trip", __name__, url_prefix="/trips")
 
@@ -27,7 +28,7 @@ def generate_trip_plan():
     trip_details = request.get_json()
 
     prompt = f"""
-        Generate a detailed trip plan for visiting {trip_details['destination']} from {trip_details['start_date']} to {trip_details['end_date']} with a budget of {trip_details['budget']}. The plan should include the destination, latitude and longitude of the destination, start and end dates (from start day to end day included), budget (not more than the given budget), and an itinerary with days. Separate the itinerary into activities (what to do), places to eat, and places to stay per day. For each activity, place to eat, and place to stay include to approximate cost in the description.
+        Generate a detailed trip plan for visiting {trip_details['destination']} from {trip_details['start_date']} to {trip_details['end_date']} with a budget of {trip_details['budget']}. The plan should include the destination, latitude and longitude of the destination, start and end dates (from start day to end day included), budget (not more than the given budget), place to stay, an itinerary with days. Separate the itinerary into activities (what to do), places to eat. For each activity, place to eat, and place to stay include to approximate cost in the description.
         Format the response as follows:
 
         {{
@@ -37,6 +38,12 @@ def generate_trip_plan():
         "start_date": "{{trip_details['start_date']}}",
         "end_date": "{{trip_details['end_date']}}",
         "budget": {{trip_details['budget']}},
+        "PlaceToRest":{{
+            "place": "place_name_placeholder",
+            "latitude": "latitude_placeholder_as_float",
+            "longitude": "longitude_placeholder_as_float",
+            "description": "description_placeholder"
+        }},
         "itinerary": [
             {{
             "day": 1,
@@ -58,15 +65,6 @@ def generate_trip_plan():
                 }},
                 ...
             ],
-            "PlaceToRest": [
-                {{
-                "place": "place_name_placeholder",
-                "latitude": "latitude_placeholder_as_float",
-                "longitude": "longitude_placeholder_as_float",
-                "description": "description_placeholder"
-                }},
-                ...
-            ]
             }},
             ...
         ]
@@ -88,6 +86,18 @@ def generate_trip_plan():
 def save_trip(user_id):
     itinerary_json = request.get_json()
 
+    start_date = datetime.strptime(itinerary_json['start_date'], "%Y-%m-%d")
+    end_date = datetime.strptime(itinerary_json['end_date'], "%Y-%m-%d")
+
+    place_data = itinerary_json['PlaceToRest']
+
+    place_to_rest = PlaceToRest(
+        place=place_data['place'],
+        latitude=place_data['latitude'],
+        longitude=place_data['longitude'],
+        description=place_data['description']
+    )
+
     trip = Trip(
         destination=itinerary_json['destination'],
         latitude=itinerary_json['latitude'],
@@ -95,6 +105,7 @@ def save_trip(user_id):
         start_date=itinerary_json['start_date'],
         end_date=itinerary_json['end_date'],
         budget=itinerary_json['budget'],
+        place_to_rest=place_to_rest,
         user_id=user_id
     )
 
@@ -136,16 +147,6 @@ def save_trip(user_id):
                 day_id=day.id
             )
             db.session.add(place_to_eat)
-        
-        for place_to_rest_json in e['PlaceToRest']:
-            place_to_rest = PlaceToRest(
-                place=place_to_rest_json['place'],
-                latitude=place_to_rest_json['latitude'],
-                longitude=place_to_rest_json['longitude'],
-                description=place_to_rest_json['description'],
-                day_id=day.id
-            )
-            db.session.add(place_to_rest)
         
         db.session.commit()
 

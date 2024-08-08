@@ -3,7 +3,6 @@ from sqlalchemy import Integer, ForeignKey
 from app.db import db
 from app.models.activity import Activity
 from app.models.place_to_eat import PlaceToEat
-from app.models.place_to_rest import PlaceToRest
 
 class Day(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -21,12 +20,7 @@ class Day(db.Model):
         back_populates="day",
         cascade="all, delete-orphan"
         )
-    places_to_rest: Mapped[list["PlaceToRest"]] = relationship(
-        "PlaceToRest", 
-        back_populates="day",
-        cascade="all, delete-orphan"
-        )
-
+    
     def update_from_dict(self, data):
         self.day_number = data.get("day_number", self.day_number)
         self.itinerary_id = data.get("itinerary_id", self.itinerary_id)
@@ -37,8 +31,7 @@ class Day(db.Model):
             day_number=self.day_number,
             itinerary_id=self.itinerary_id,
             activities=[activity.to_dict() for activity in self.activities],
-            places_to_eat=[place_to_eat.to_dict() for place_to_eat in self.places_to_eat],
-            places_to_rest=[place_to_rest.to_dict() for place_to_rest in self.places_to_rest]
+            places_to_eat=[place_to_eat.to_dict() for place_to_eat in self.places_to_eat]
         )
 
     @classmethod
