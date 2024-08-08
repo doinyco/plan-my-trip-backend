@@ -1,6 +1,6 @@
-from flask import json
-
-from app import db
+# tests/test_user.py
+import pytest
+from app import create_app, db
 from app.models.user import User
 
 
@@ -8,19 +8,21 @@ def test_create_user(client):
     # Arrange
     data = {
         "username": "testuser",
-        "email": "test@example.com", 
-        "password": "testpassword"
+        "email": "test@example.com",
+        "password": "Testpassword123"
     }
 
     # Act
-    response = client.post("/users", data=json.dumps(data), content_type='application/json')
+    response = client.post("/auth/register", json=data)
+    print(f"Response status: {response.status_code}")
+    print(f"Response data: {response.get_json()}")
 
     # Assert
-    assert response.status_code == 201
+    assert response.status_code == 200
     response_data = response.get_json()
-    assert "user" in response_data
-    assert response_data["user"]["username"] == data["username"]
-    assert response_data["user"]["email"] == data["email"]
+    assert "success" in response_data
+    assert response_data["success"] == "Registration successful. You can now log in."
+
 
 def test_create_user_invalid_data(client):
     # Arrange
@@ -30,12 +32,13 @@ def test_create_user_invalid_data(client):
     }
 
     # Act
-    response = client.post("/users", data=json.dumps(data), content_type='application/json')
+    response = client.post("/auth/register", json=data)
 
     # Assert
     assert response.status_code == 400
     response_data = response.get_json()
-    assert response_data["details"] == "Invalid data"
+    assert "error" in response_data
+    assert response_data["error"] == "Username, email, and password are required fields."
 
 def test_get_user(client):
     # Arrange
@@ -44,12 +47,11 @@ def test_get_user(client):
     db.session.commit()
 
     # Act
-    response = client.get("/users")
+    response = client.get(f"/users/{user.id}")
 
     # Assert
     assert response.status_code == 200
     response_data = response.get_json()
-    assert isinstance(response_data, list)
-    assert len(response_data) == 1
-    assert response_data[0]["username"] == user.username
-    assert response_data[0]["email"] == user.email
+    assert "user" in response_data
+    assert response_data["user"]["username"] == user.username
+    assert response_data["user"]["email"] == user.email
