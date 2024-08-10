@@ -16,6 +16,7 @@ def test_generate_trip_plan_with_valid_data_and_valid_response(client):
         "longitude": 2.3522,
         "start_date": "2024-12-01",
         "end_date": "2024-12-02",
+        "description": "A trip to Paris, the City of Light",
         "budget": 200,
         "itinerary": [
             {

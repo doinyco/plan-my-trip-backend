@@ -12,6 +12,7 @@ class Trip(db.Model, ModelMixin):
     start_date: Mapped[datetime] = mapped_column(nullable=False)
     end_date: Mapped[datetime] = mapped_column(nullable=False)
     budget: Mapped[int] = mapped_column(nullable=False)
+    description: Mapped[str] = mapped_column(nullable=True)
 
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="trips")
@@ -31,6 +32,7 @@ class Trip(db.Model, ModelMixin):
         self.start_date = data["start_date"]
         self.end_date = data["end_date"]
         self.budget = data["budget"]
+        self.description = data["description"]
 
     def to_dict(self):
         data = dict(
@@ -41,6 +43,7 @@ class Trip(db.Model, ModelMixin):
             start_date=self.start_date,
             end_date=self.end_date,
             budget=self.budget,
+            description=self.description,
             itineraries=[itinerary.to_dict() for itinerary in self.itineraries]
         )
 
@@ -61,5 +64,6 @@ class Trip(db.Model, ModelMixin):
             start_date = data["start_date"],
             end_date = data["end_date"],
             budget=data["budget"],
+            description=data["description"],
             user_id=data["user_id"]
         )

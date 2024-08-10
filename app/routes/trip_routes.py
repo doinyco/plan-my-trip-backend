@@ -27,9 +27,21 @@ def get_openai_client():
 def generate_trip_plan():
     trip_details = request.get_json()
 
+    start_date = datetime.strptime(trip_details['start_date'], "%Y-%m-%d")
+    end_date = datetime.strptime(trip_details['end_date'], "%Y-%m-%d")
+    days = (end_date - start_date).days + 1
+
     prompt = f"""
-        Generate a detailed trip plan for visiting {trip_details['destination']} from {trip_details['start_date']} to {trip_details['end_date']} with a budget of {trip_details['budget']}. The plan should include the destination, latitude and longitude of the destination, start and end dates (from start day to end day included), budget (not more than the given budget), place to stay, an itinerary with days. Separate the itinerary into activities (what to do), places to eat. For each activity, place to eat, and place to stay include to approximate cost in the description.
-        Format the response as follows:
+        Generate a detailed trip plan for visiting {trip_details['destination']} for {days} days with a strict budget of ${trip_details['budget']}. The start date is {trip_details['start_date']} and the end date is {trip_details['end_date']}. 
+
+        Please ensure that the total cost of the trip does not exceed the given budget of ${trip_details['budget']}. The plan should include:
+
+        - The destination
+        - Latitude and longitude of the destination
+        - Start and end dates (from start day to end day included)
+        - Budget (ensure all costs add up to no more than the given budget)
+        - A place to stay, including approximate cost
+        - An itinerary with daily activities and places to eat, each with approximate costs
 
         {{
         "destination": "{{trip_details['destination']}}",
@@ -38,11 +50,12 @@ def generate_trip_plan():
         "start_date": "{{trip_details['start_date']}}",
         "end_date": "{{trip_details['end_date']}}",
         "budget": {{trip_details['budget']}},
+        "description": "description_placeholder",
         "PlaceToRest":{{
             "place": "place_name_placeholder",
             "latitude": "latitude_placeholder_as_float",
             "longitude": "longitude_placeholder_as_float",
-            "description": "description_placeholder"
+            "description": "description_placeholder", include approximate cost in the description
         }},
         "itinerary": [
             {{
@@ -52,7 +65,7 @@ def generate_trip_plan():
                 "activity": "activity_name_placeholder",
                 "latitude": "latitude_placeholder_as_float",
                 "longitude": "longitude_placeholder_as_float",
-                "description": "description_placeholder"
+                "description": "description_placeholder", include approximate cost in the description
                 }},
                 ...
             ],
@@ -61,7 +74,7 @@ def generate_trip_plan():
                 "place": "place_name_placeholder",
                 "latitude": "latitude_placeholder_as_float",
                 "longitude": "longitude_placeholder_as_float",
-                "description": "description_placeholder"
+                "description": "description_placeholder", include approximate cost in the description
                 }},
                 ...
             ],
@@ -86,6 +99,12 @@ def generate_trip_plan():
 def save_trip(user_id):
     itinerary_json = request.get_json()
 
+    # Check for required fields
+    required_fields = ['destination', 'latitude', 'longitude', 'start_date', 'end_date', 'budget', 'PlaceToRest', 'itinerary']
+    missing_fields = [field for field in required_fields if field not in itinerary_json]
+    if missing_fields:
+        return jsonify({"error": "Missing required fields: " + ", ".join(missing_fields)}), 400
+
     start_date = datetime.strptime(itinerary_json['start_date'], "%Y-%m-%d")
     end_date = datetime.strptime(itinerary_json['end_date'], "%Y-%m-%d")
 
@@ -102,9 +121,10 @@ def save_trip(user_id):
         destination=itinerary_json['destination'],
         latitude=itinerary_json['latitude'],
         longitude=itinerary_json['longitude'],
-        start_date=itinerary_json['start_date'],
-        end_date=itinerary_json['end_date'],
+        start_date=start_date,
+        end_date=end_date,
         budget=itinerary_json['budget'],
+        description=itinerary_json['description'],
         place_to_rest=place_to_rest,
         user_id=user_id
     )
@@ -150,7 +170,7 @@ def save_trip(user_id):
         
         db.session.commit()
 
-    return jsonify(trip.to_dict(), 201)
+    return jsonify(trip.to_dict()), 201
 
 @bp.get("/<trip_id>")
 @require_trip

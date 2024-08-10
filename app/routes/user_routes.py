@@ -31,6 +31,7 @@ def get_user_trips(user):
             "start_date": trip.start_date.strftime('%Y-%m-%d'),
             "end_date": trip.end_date.strftime('%Y-%m-%d'),
             "budget": trip.budget,
+            "description": trip.description,
             "place_to_rest": {},
             "itinerary": [],
             "id": trip.id   
