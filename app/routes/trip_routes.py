@@ -44,6 +44,8 @@ def generate_trip_plan():
         - A place to stay, tailored to the budget (e.g., couchsurfing for low budgets, budget hotels for medium budgets, comfortable stays for higher budgets), including approximate cost
         - An itinerary with daily activities and places to eat (breakfast, lunch/dinner), each with approximate costs
 
+        **Return only the JSON object** with the following structure:
+
         {{
         "destination": "{{trip_details['destination']}}",
         "latitude": "latitude_placeholder_as_float",
