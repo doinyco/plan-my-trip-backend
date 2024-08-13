@@ -32,7 +32,9 @@ def generate_trip_plan():
     days = (end_date - start_date).days + 1
 
     prompt = f"""
-        Generate a detailed trip plan for visiting {trip_details['destination']} for {days} days with a strict budget of ${trip_details['budget']}. The start date is {trip_details['start_date']} and the end date is {trip_details['end_date']}. 
+        You are an AI that generates trip plans. Please respond only with the JSON format of the trip plan without any additional text or explanation.
+        
+        Generate a detailed trip plan in JSON format for visiting {trip_details['destination']} for {days} days with a strict budget of ${trip_details['budget']}. The start date is {trip_details['start_date']} and the end date is {trip_details['end_date']}. 
 
         Please ensure that the total cost of the trip does not exceed the given budget of ${trip_details['budget']}. The plan should include:
 
@@ -44,7 +46,7 @@ def generate_trip_plan():
         - A place to stay, tailored to the budget (e.g., couchsurfing for low budgets, budget hotels for medium budgets, comfortable stays for higher budgets), including approximate cost
         - An itinerary with daily activities and places to eat (breakfast, lunch/dinner), each with approximate costs
 
-        **Return only the JSON object** with the following structure:
+        Format the response as follows:
 
         {{
         "destination": "{{trip_details['destination']}}",
