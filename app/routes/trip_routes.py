@@ -40,8 +40,9 @@ def generate_trip_plan():
         - Latitude and longitude of the destination
         - Start and end dates (from start day to end day included)
         - Budget (ensure all costs add up to no more than the given budget)
-        - A place to stay, including approximate cost
-        - An itinerary with daily activities and places to eat, each with approximate costs
+        - A description of the trip that incorporates the summary of costs, accommodation, and activities. The description should highlight the total cost, place to stay, and key activities.
+        - A place to stay, tailored to the budget (e.g., couchsurfing for low budgets, budget hotels for medium budgets, comfortable stays for higher budgets), including approximate cost
+        - An itinerary with daily activities and places to eat (breakfast, lunch/dinner), each with approximate costs
 
         {{
         "destination": "{{trip_details['destination']}}",
@@ -65,7 +66,7 @@ def generate_trip_plan():
                 "activity": "activity_name_placeholder",
                 "latitude": "latitude_placeholder_as_float",
                 "longitude": "longitude_placeholder_as_float",
-                "description": "description_placeholder", include approximate cost in the description
+                "description": "description_placeholder", include approximate cost in the activity description
                 }},
                 ...
             ],
@@ -74,7 +75,7 @@ def generate_trip_plan():
                 "place": "place_name_placeholder",
                 "latitude": "latitude_placeholder_as_float",
                 "longitude": "longitude_placeholder_as_float",
-                "description": "description_placeholder", include approximate cost in the description
+                "description": "description_placeholder", include approximate cost in the place to eat description
                 }},
                 ...
             ],
@@ -86,7 +87,7 @@ def generate_trip_plan():
 
     client = get_openai_client()  # modified this to avoid the need of creating a new client every time in import
     completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt}
