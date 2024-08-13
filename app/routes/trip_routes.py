@@ -31,12 +31,13 @@ def generate_trip_plan():
     end_date = datetime.strptime(trip_details['end_date'], "%Y-%m-%d")
     days = (end_date - start_date).days + 1
 
+    
     prompt = f"""
-        You are an AI that generates trip plans. Please respond only with the JSON format of the trip plan without any additional text or explanation.
-        
+        You are an AI that generates trip plans. Please respond only with plain JSON format without any markdown code block or additional text. 
+
         Generate a detailed trip plan in JSON format for visiting {trip_details['destination']} for {days} days with a strict budget of ${trip_details['budget']}. The start date is {trip_details['start_date']} and the end date is {trip_details['end_date']}. 
 
-        Please ensure that the total cost of the trip does not exceed the given budget of ${trip_details['budget']}. The plan should include:
+        Ensure that the total cost of the trip does not exceed the given budget of ${trip_details['budget']}. The plan should include:
 
         - The destination
         - Latitude and longitude of the destination
@@ -46,20 +47,20 @@ def generate_trip_plan():
         - A place to stay, tailored to the budget (e.g., couchsurfing for low budgets, budget hotels for medium budgets, comfortable stays for higher budgets), including approximate cost
         - An itinerary with daily activities and places to eat (breakfast, lunch/dinner), each with approximate costs
 
-        Format the response as follows:
+        Format the response as follows without markdown formatting:
 
         {{
-        "destination": "{{trip_details['destination']}}",
-        "latitude": "latitude_placeholder_as_float",
-        "longitude": "longitude_placeholder_as_float",
-        "start_date": "{{trip_details['start_date']}}",
-        "end_date": "{{trip_details['end_date']}}",
-        "budget": {{trip_details['budget']}},
+        "destination": "{trip_details['destination']}",
+        "latitude": latitude_placeholder_as_float,
+        "longitude": longitude_placeholder_as_float,
+        "start_date": "{trip_details['start_date']}",
+        "end_date": "{trip_details['end_date']}",
+        "budget": {trip_details['budget']},
         "description": "description_placeholder",
-        "PlaceToRest":{{
+        "PlaceToRest": {{
             "place": "place_name_placeholder",
-            "latitude": "latitude_placeholder_as_float",
-            "longitude": "longitude_placeholder_as_float",
+            "latitude": latitude_placeholder_as_float,
+            "longitude": longitude_placeholder_as_float,
             "description": "description_placeholder", include approximate cost in the description
         }},
         "itinerary": [
@@ -68,8 +69,8 @@ def generate_trip_plan():
             "activities": [
                 {{
                 "activity": "activity_name_placeholder",
-                "latitude": "latitude_placeholder_as_float",
-                "longitude": "longitude_placeholder_as_float",
+                "latitude": latitude_placeholder_as_float,
+                "longitude": longitude_placeholder_as_float,
                 "description": "description_placeholder", include approximate cost in the activity description
                 }},
                 ...
@@ -77,8 +78,8 @@ def generate_trip_plan():
             "placesToEat": [
                 {{
                 "place": "place_name_placeholder",
-                "latitude": "latitude_placeholder_as_float",
-                "longitude": "longitude_placeholder_as_float",
+                "latitude": latitude_placeholder_as_float,
+                "longitude": longitude_placeholder_as_float,
                 "description": "description_placeholder", include approximate cost in the place to eat description
                 }},
                 ...
@@ -89,7 +90,7 @@ def generate_trip_plan():
         }}
     """
 
-    client = get_openai_client()  # modified this to avoid the need of creating a new client every time in import
+    client = get_openai_client()  # Use this to avoid creating a new client each time
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -98,7 +99,7 @@ def generate_trip_plan():
         ]
     )
     
-    return(completion.choices[0].message.content)
+    return completion.choices[0].message.content
 
 @bp.post("/save/<user_id>")
 def save_trip(user_id):
